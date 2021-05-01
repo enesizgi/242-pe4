@@ -66,9 +66,26 @@ getContacts_helper (Leaf name) digits = [(digits,name)]
 -- autocomplete: Create an autocomplete list of contacts given a prefix
 -- e.g. autocomplete "32" areaCodes -> 
 --      [([Digit '2'], "Adana"), ([Digit '6'], "Hatay"), ([Digit '8'], "Osmaniye")]
-autocomplete :: String -> DigitTree -> [(PhoneNumber, String)]
-autocomplete _ _ = undefined
 
+autocomplete :: String -> DigitTree -> [(PhoneNumber, String)]
+
+autocomplete str tree
+    | null (toDigits str) = []
+    | otherwise = autocomplete_helper str tree
+
+autocomplete_helper str (Leaf name)
+    | null str = [([],name)]
+    | otherwise = []
+    
+autocomplete_helper str (Node lst)
+    | null str = getContacts (Node lst)
+    | null lst = []
+    | (Digit (head str)) == (fst (head lst)) = autocomplete_helper (drop 1 str) (snd (head lst))
+    | otherwise = autocomplete_helper str (Node (drop 1 lst))
+
+treeTolst (Node lst) = lst
+
+charToDigit char = Digit char
 
 -----------
 -- Example Trees
