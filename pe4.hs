@@ -50,11 +50,18 @@ toDigits_helper str digits
 
 -- numContacts: Count the number of contacts in the phonebook...
 numContacts :: DigitTree -> Int
-numContacts _ = undefined
-    
+
+numContacts (Node []) = 0
+numContacts (Node lst) = numContacts (snd (head lst)) + numContacts ((Node (drop 1 lst)))
+numContacts (Leaf _) = 1
+
 -- getContacts: Generate the contacts and their phone numbers in order given a tree. 
 getContacts :: DigitTree -> [(PhoneNumber, String)]
-getContacts _ = undefined
+getContacts tree = getContacts_helper tree []
+
+getContacts_helper (Node []) digits = []
+getContacts_helper (Node lst) digits = getContacts_helper (snd (head lst)) (digits ++ [fst (head lst)]) ++ getContacts_helper ((Node (drop 1 lst))) digits
+getContacts_helper (Leaf name) digits = [(digits,name)]
 
 -- autocomplete: Create an autocomplete list of contacts given a prefix
 -- e.g. autocomplete "32" areaCodes -> 
